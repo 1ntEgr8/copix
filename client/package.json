@@ -1,0 +1,13 @@
+{
+  "name": "copix",
+  "version": "1.0.0",
+  "description": "A collaborative pixel art drawing experience",
+  "main": "index.js",
+  "repository": "https://www.github.com/1ntEgr8/copix",
+  "author": "Elton Pinto",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^7.2.0",
+    "parcel": "^1.12.4"
+  }
+}
