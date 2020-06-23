@@ -1,0 +1,69 @@
+body {
+    padding: 0px;
+    margin : 0px;
+}
+
+.canvas, .toolbox {
+    position: relative;
+}
+
+.canvas {
+    z-index: 900;
+    cursor: crosshair;
+}
+
+.toolbox {
+    z-index: 1000;
+}
+
+.copix-palette {
+    position: absolute;
+    display: flex;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.copix-zoom {
+    position: absolute;
+    bottom: 40px;
+    right: 80px;
+}
+
+.copix-zoom button {
+    font-size: 1.5rem;
+    margin: 2px; 
+    cursor: pointer;
+}
+
+/* TEMP STYLES */
+.temp-color {
+    height: 50px;
+    width: 50px;
+    border-radius: 100%;
+    border: 5px solid black;
+}
+
+.red {
+    background: red;
+}
+
+.blue {
+    background: blue;
+}
+
+.green {
+    background: green;
+}
+
+.yellow {
+    background: yellow;
+}
+
+.black {
+    background: black;
+}
+
+.white {
+    background: white;
+}
