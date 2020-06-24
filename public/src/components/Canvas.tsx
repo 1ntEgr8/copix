@@ -10,6 +10,8 @@ export class Canvas extends React.Component<AppState> {
         [50, 50, 200, 200]
     ];
     zoom: number = 1;
+    scrollX: number = 0;
+    scrollY: number = 0;
 
     constructor(props: AppState) {
         super(props);
@@ -49,9 +51,36 @@ export class Canvas extends React.Component<AppState> {
             e.preventDefault();
             if (e.ctrlKey) {
                 this.onZoom(-e.deltaY * 0.05);
+            } else {
+                this.onScroll(e.deltaX, e.deltaY);
             }
         });
     };
+
+    private onScroll = (dx: number, dy: number) => {
+        const ctx = this.canvas.getContext("2d");
+        // clear screen
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        
+        const nwidth = window.innerWidth;
+        const nheight = window.innerHeight;
+        const x = (-nwidth * (this.zoom - 1)) / 2;
+        const y = (-nheight * (this.zoom - 1)) / 2;
+        ctx.translate(x-dx, y-dy);
+        ctx.scale(this.zoom, this.zoom);
+
+        for (let shape of this.temp) {
+            ctx.strokeRect(
+                shape[0],
+                shape[1],
+                shape[2],
+                shape[3],
+            );
+        }
+
+        ctx.scale(1 / this.zoom, 1 / this.zoom);
+        ctx.translate(-x, -y);
+    }
 
     private onZoom = (dz: number) => {
         const ctx = this.canvas.getContext("2d");
@@ -59,7 +88,6 @@ export class Canvas extends React.Component<AppState> {
         // clear screen
         ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         
-        // 
         this.zoom = normalizeZoom(this.zoom + dz);
 
         const nwidth = window.innerWidth;
@@ -71,7 +99,7 @@ export class Canvas extends React.Component<AppState> {
         ctx.scale(this.zoom, this.zoom);
         
         for (let shape of this.temp) {
-            ctx.fillRect(
+            ctx.strokeRect(
                 shape[0],
                 shape[1],
                 shape[2],
