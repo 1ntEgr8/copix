@@ -2,7 +2,7 @@ import * as React from "react";
 import { Zoom } from "./Zoom";
 import { Palette } from "./Palette";
 
-export class ToolBox extends React.Component {
+export class ToolBox extends React.Component<any> {
     constructor(props: any) {
         super(props);
     }
@@ -11,7 +11,9 @@ export class ToolBox extends React.Component {
         return (
             <div className="toolbox">
                 <Palette/>
-                <Zoom/>
+                <Zoom
+                    onZoom={this.props.onZoom}
+                />
             </div>
         );
     }
