@@ -1,10 +1,14 @@
 import * as React from "react";
 import { AppState } from "../appState";
 import { ToolBox } from "./ToolBox";
+import { normalizeZoom } from "../zoom";
 
 export class Canvas extends React.Component<AppState> {
     canvas: HTMLCanvasElement | null = null;
-    temp: number[][] = [[100, 100]];
+    temp: number[][] = [
+        [window.innerWidth / 2 - 50, window.innerHeight / 2 - 50, 100, 100],
+        [50, 50, 200, 200]
+    ];
     zoom: number = 1;
 
     constructor(props: AppState) {
@@ -34,25 +38,29 @@ export class Canvas extends React.Component<AppState> {
         const ctx = canvas.getContext("2d");
         for (let shape of this.temp) {
             ctx.fillRect(
-                window.innerWidth / 2 - 50,
-                window.innerHeight / 2 - 50,
                 shape[0],
-                shape[1]
+                shape[1],
+                shape[2],
+                shape[3]
             );
         }
+
+        this.canvas.addEventListener("wheel", e => {
+            e.preventDefault();
+            if (e.ctrlKey) {
+                this.onZoom(-e.deltaY * 0.05);
+            }
+        });
     };
 
     private onZoom = (dz: number) => {
         const ctx = this.canvas.getContext("2d");
-        ctx.scale(1, 1);
-        ctx.translate(0, 0);
         
+        // clear screen
         ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
-        this.zoom += dz;
-        this.zoom = parseFloat(this.zoom.toFixed(2))
         
-        console.log(this.zoom);
+        // 
+        this.zoom = normalizeZoom(this.zoom + dz);
 
         const nwidth = window.innerWidth;
         const nheight = window.innerHeight;
@@ -64,10 +72,10 @@ export class Canvas extends React.Component<AppState> {
         
         for (let shape of this.temp) {
             ctx.fillRect(
-                window.innerWidth / 2 - 50,
-                window.innerHeight / 2 - 50,
                 shape[0],
-                shape[1]
+                shape[1],
+                shape[2],
+                shape[3],
             );
         }
 
