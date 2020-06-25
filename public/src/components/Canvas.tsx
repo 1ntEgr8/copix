@@ -45,16 +45,14 @@ export class Canvas extends React.Component<AppState, CanvasState> {
     }
 
     public componentDidUpdate() {
-        // insert call to renderScene
+        // TODO insert call to renderScene
         const { width, height, zoom, scrollX, scrollY } = this.state;
 
         const ctx = this.canvas.getContext("2d");
         // clear screen
         ctx.clearRect(0, 0, width, height);
         
-        // apply scroll
-        ctx.translate(scrollX, scrollY);
-
+        
         // apply zoom
         const dx = (-width * (zoom - 1)) / 2;
         const dy = (-height * (zoom - 1)) / 2;
@@ -63,15 +61,21 @@ export class Canvas extends React.Component<AppState, CanvasState> {
 
         // draw shapes
         for (let shape of this.temp) {
+            // apply scroll
+            ctx.translate(scrollX, scrollY);
+
+            // draw shape 
             ctx.fillRect(shape[0], shape[1], shape[2], shape[3]);
+
+            // reset scroll
+            ctx.translate(-scrollX, -scrollY);
+
         }
 
         // reset zoom
         ctx.scale(1 / zoom, 1 / zoom);
         ctx.translate(-dx, -dy);
 
-        // reset scroll
-        ctx.translate(-scrollX, -scrollY);
     }
 
     private handleCanvasRef = (canvas: HTMLCanvasElement) => {
