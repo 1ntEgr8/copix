@@ -4,5 +4,6 @@ import { Canvas } from "./Canvas";
 
 export function App() {
     const state = defaultAppState();
+    
     return <Canvas {...state} />;
 }
