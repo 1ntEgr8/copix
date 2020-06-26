@@ -8,11 +8,13 @@ export class ToolBox extends React.Component<any> {
     }
 
     public render() {
+        const { zoom, onZoom } = this.props;
         return (
             <div className="toolbox">
                 <Palette/>
                 <Zoom
-                    onZoom={this.props.onZoom}
+                    zoom={zoom}
+                    onZoom={onZoom}
                 />
             </div>
         );

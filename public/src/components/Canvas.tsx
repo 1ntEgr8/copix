@@ -27,7 +27,7 @@ export class Canvas extends React.Component<AppState, CanvasState> {
     }
 
     public render() {
-        const { width, height } = this.state;
+        const { width, height, zoom } = this.state;
         return (
             <div>
                 <main>
@@ -38,7 +38,7 @@ export class Canvas extends React.Component<AppState, CanvasState> {
                         width={width}
                         height={height}
                     />
-                    <ToolBox onZoom={this.zoom} />
+                    <ToolBox zoom={zoom} onZoom={this.zoom} />
                 </main>
             </div>
         );
@@ -85,8 +85,8 @@ export class Canvas extends React.Component<AppState, CanvasState> {
     public scroll = (dx: number, dy: number) => {
         const { scrollX, scrollY } = this.state;
         this.setState({
-            scrollX: scrollX + dx,
-            scrollY: scrollY + dy
+            scrollX: (scrollX + dx),
+            scrollY: (scrollY + dy),
         });
     };
 

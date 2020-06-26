@@ -1,6 +1,7 @@
 body {
     padding: 0px;
     margin : 0px;
+    font-family: Hack, monospace;
 }
 
 .canvas, .toolbox {
@@ -28,12 +29,14 @@ body {
     position: absolute;
     bottom: 40px;
     right: 80px;
+    text-align: center;
 }
 
 .copix-zoom button {
     font-size: 1.5rem;
     margin: 2px; 
     cursor: pointer;
+    width: 30px;
 }
 
 /* TEMP STYLES */
