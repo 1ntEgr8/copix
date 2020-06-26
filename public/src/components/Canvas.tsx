@@ -46,13 +46,12 @@ export class Canvas extends React.Component<AppState, CanvasState> {
 
     public componentDidUpdate() {
         // TODO insert call to renderScene
-        const { width, height, zoom, scrollX, scrollY } = this.state;
+        const { width, height, zoom, scrollX, scrollY, pixels } = this.state;
 
         const ctx = this.canvas.getContext("2d");
         // clear screen
         ctx.clearRect(0, 0, width, height);
-        
-        
+
         // apply zoom
         const dx = (-width * (zoom - 1)) / 2;
         const dy = (-height * (zoom - 1)) / 2;
@@ -60,48 +59,21 @@ export class Canvas extends React.Component<AppState, CanvasState> {
         ctx.scale(zoom, zoom);
 
         // draw shapes
-        for (let shape of this.temp) {
+        for (let pixel of pixels) {
             // apply scroll
             ctx.translate(scrollX, scrollY);
 
-            // draw shape 
-            ctx.fillRect(shape[0], shape[1], shape[2], shape[3]);
+            // draw pixel
+            this.paintPixel(ctx, pixel);
 
             // reset scroll
             ctx.translate(-scrollX, -scrollY);
-
         }
 
         // reset zoom
         ctx.scale(1 / zoom, 1 / zoom);
         ctx.translate(-dx, -dy);
-
     }
-
-    private handleCanvasRef = (canvas: HTMLCanvasElement) => {
-        this.canvas = canvas;
-
-        // for testing purposes
-        const ctx = canvas.getContext("2d");
-        for (let shape of this.temp) {
-            ctx.fillRect(shape[0], shape[1], shape[2], shape[3]);
-        }
-
-        this.addEventListeners();
-    };
-
-    private addEventListeners() {
-        this.canvas.addEventListener("wheel", this.handleWheel);
-    }
-
-    private handleWheel = (e: WheelEvent) => {
-        e.preventDefault();
-        if (e.ctrlKey) {
-            this.zoom(-e.deltaY * 0.05);
-        } else {
-            this.scroll(-e.deltaX, -e.deltaY);
-        }
-    };
 
     public zoom = (dz: number) => {
         const { zoom } = this.state;
@@ -118,28 +90,52 @@ export class Canvas extends React.Component<AppState, CanvasState> {
         });
     };
 
-    // private onScroll = (dx: number, dy: number) => {
-    //     const ctx = this.canvas.getContext("2d");
-    //     // clear screen
-    //     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    //
-    //     const nwidth = window.innerWidth;
-    //     const nheight = window.innerHeight;
-    //     const x = (-nwidth * (this.zoom - 1)) / 2;
-    //     const y = (-nheight * (this.zoom - 1)) / 2;
-    //     ctx.translate(x-dx, y-dy);
-    //     ctx.scale(this.zoom, this.zoom);
+    private handleCanvasRef = (canvas: HTMLCanvasElement) => {
+        this.canvas = canvas;
+        this.addEventListeners();
+    };
 
-    //     for (let shape of this.temp) {
-    //         ctx.strokeRect(
-    //             shape[0],
-    //             shape[1],
-    //             shape[2],
-    //             shape[3],
-    //         );
-    //     }
+    private addEventListeners() {
+        this.canvas.addEventListener("wheel", this.handleWheel);
+        this.canvas.addEventListener("click", this.handleClick);
+    }
 
-    //     ctx.scale(1 / this.zoom, 1 / this.zoom);
-    //     ctx.translate(-x, -y);
-    // }
+    private handleWheel = (e: WheelEvent) => {
+        e.preventDefault();
+        if (e.ctrlKey) {
+            this.zoom(-e.deltaY * 0.05);
+        } else {
+            this.scroll(-e.deltaX, -e.deltaY);
+        }
+    };
+
+    private handleClick = (e: MouseEvent) => {
+        const { pixels } = this.state;
+        const { x, y } = this.normalizeClick(e.clientX, e.clientY);
+
+        pixels.push(new Pixel(x, y, 20, "black"));
+        this.setState({
+            pixels
+        });
+    };
+
+    private paintPixel = (ctx: CanvasRenderingContext2D, pixel: Pixel) => {
+        const { size, color, coords } = pixel;
+        const { x, y } = coords;
+        const normalizedX = Math.floor(x / size) * size;
+        const normalizedY = Math.floor(y / size) * size;
+        
+        ctx.fillStyle = color;
+        ctx.fillRect(normalizedX, normalizedY, size, size);
+    };
+
+    private normalizeClick = (x: number, y: number) => {
+        const { zoom, scrollX, scrollY, width, height } = this.state;
+        const dx = (-width * (zoom - 1)) / 2;
+        const dy = (-height * (zoom - 1)) / 2;
+        return {
+            x: (x - dx) / zoom - scrollX,
+            y: (y - dy) / zoom - scrollY, 
+        }
+    };
 }
